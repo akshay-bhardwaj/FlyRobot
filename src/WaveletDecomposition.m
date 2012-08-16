@@ -3,7 +3,7 @@ close all;
 clear all;
 
 %Load Data
-load('Data_2Ch_2012-05-24_18-23-45.mat');
+load('../data/two_neuron/Data_2Ch_2012-07-18_15-48-18_[bih1_rec].mat');
 DC_Offset = 2.3;
 Threshold = 0.3;
 Neuron1Data = vect{1} - DC_Offset;
@@ -37,6 +37,27 @@ Coefs = cwt(Neuron1Data, Scale, WaveName);
 SampleMeanCoeff = mean(Coefs,2)';
 SigmaCoeff = median((coefs-SampleMeanCoeff), 2) ./ 0.6745;
 MuCoeff = mean(abs(coefs'))';
+Gamma = 0.5; %Dummy value. have to check literature for it! Gamma depends 
+% on acceptable false alarms and ommision. These are calculated using
+% LambdaFA and LambdaOM. and the prior probabilites of the two hypothesis,
+% denoted by P(H0) and P(H1).
+Theta = 0.2; % Dummy Value. This variable decides the threshold for 
+% hypothesis testing.
+
+% To determine Sample Mean independent of noise we use the threshold
+% defined as Threshold = sd*sqrt(2*log(N)) and then calculate set of
+% elements which lie below the threshold.
+SizeCoeffs = size(Coefs);
+N = SizeCoeffs(2);
+
+sd = std(coefs,0,2);
+Threshold = sd.*sqrt(2*log(N));
+
+% for i =  Start here
+CoeffFilterd = Coefs(Coefs <= Threshold);
+
+
+
 
 		 
 
