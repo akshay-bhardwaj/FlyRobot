@@ -49,12 +49,21 @@ Theta = 0.2; % Dummy Value. This variable decides the threshold for
 % elements which lie below the threshold.
 SizeCoeffs = size(Coefs);
 N = SizeCoeffs(2);
+NumCoeffs = SizeCoeffs(1);
 
 sd = std(coefs,0,2);
 Threshold = sd.*sqrt(2*log(N));
+FilteredSampleMean = zeros(NumCoeffs);
+% Calculating sample mean of the data filtered out using simple
+% thresholding operation. Threshold calculated using formula:
+% Threshold = sd.*sqrt(2*log(N)) 
 
-% for i =  Start here
-CoeffFilterd = Coefs(Coefs <= Threshold);
+for i = 1:NumCoeffs;    
+    CoeffFilterd = Coefs(Coefs >= Threshold);
+    FilteredSampleMean(i) = mean(CoeffFilterd);
+end;
+
+
 
 
 
