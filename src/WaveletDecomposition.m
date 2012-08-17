@@ -54,14 +54,33 @@ NumCoeffs = SizeCoeffs(1);
 sd = std(coefs,0,2);
 Threshold = sd.*sqrt(2*log(N));
 FilteredSampleMean = zeros(NumCoeffs);
+SizeOfFilterdSet = zeros(NumCoeffs);
 % Calculating sample mean of the data filtered out using simple
 % thresholding operation. Threshold calculated using formula:
 % Threshold = sd.*sqrt(2*log(N)) 
 
 for i = 1:NumCoeffs;    
-    CoeffFilterd = Coefs(Coefs >= Threshold);
-    FilteredSampleMean(i) = mean(CoeffFilterd);
+    CoeffFiltered = Coefs(Coefs >= Threshold);
+    FilteredSampleMean(i) = mean(CoeffFiltered);
+    SizeOfFilterdSet = size(CoeffFiltered,2); %Check for dimension
 end;
+
+% For evaluation of Gamma we need LambdaFA & LambdaOM 
+% In this section both of these variables are defined: 
+% (Currently with dummy values)
+LambdaFA = 0.1;
+LambdaOM = 0.2;
+
+% Rather then using LambdaFA and LambdaOM, we will be using L and LM. Where
+% LM is fixed to 36.738 and L is element of [-0.188, 0.188]
+LM = 36.738;
+L = 0.1; % Currently just selected a dummy value.
+
+% Determining RationProbabilityOfHypothesis
+RationProbabilityOfHypothesis = (N - SizeOfFilterdSet)./SizeOfFilterdSet;
+
+LogGamma = L*LM + log(RationProbabilityOfHypothesis);
+Theta = FilteredSampleMean./2 + ((SigmaCoeff.^2)./FilteredSampleMean).*LogGamma;
 
 
 
