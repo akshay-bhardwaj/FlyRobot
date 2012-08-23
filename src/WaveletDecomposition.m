@@ -82,6 +82,12 @@ RationProbabilityOfHypothesis = (N - SizeOfFilterdSet)./SizeOfFilterdSet;
 LogGamma = L*LM + log(RationProbabilityOfHypothesis);
 Theta = FilteredSampleMean./2 + ((SigmaCoeff.^2)./FilteredSampleMean).*LogGamma;
 
+% Here implement a way to select whether H0/H1 is true. For this purpose
+% just use a conditional test or z test. But before applying that one must
+% know whether the data fits normal distribution or not. Will have to
+% revisit this section once again.
+
+
 
 
 
