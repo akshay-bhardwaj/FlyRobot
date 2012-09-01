@@ -1,10 +1,10 @@
 Fs = 20000; % Sampling rate in Hz
 Duration = 10; % Stimulus duration in s;
 
-AnalogInputLeft = analoginput('nidaq', 'Dev1'); % Analog input object
-AnalogInputRight = analoginput('nidaq', 'Dev2'); % Analog input object
+AnalogInput = analoginput('nidaq', 'Dev5'); % Analog input object
 
-addchannel(AnalogInput, 1);
+
+addchannel(AnalogInput, 1:2);
 
 set(AnalogInput, 'InputType', 'Differential')
 set(AnalogInput, 'TriggerType', 'Maual')
@@ -17,9 +17,8 @@ Iterations = 0;
 while 1
     trigger(AnalogInput);
     wait(AnalogInput, duration+1);
-    ResponseLeft = getdata(AnalogInputLeft); 
-    ResponseRight = getdata(AnalogInputRight); 
-    Flag = coreSystem(ResponseLeft, ResponseRight, Fs, Duration);
+    Response = getdata(Analog); 
+    Flag = coreSystem(Response, Fs, Duration);
     if Flag == 0
         disp('Target reached and process completed successfully');
         break;

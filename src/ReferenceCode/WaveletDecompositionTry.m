@@ -1,12 +1,13 @@
-function [ BinaryCoeffs ] = waveletDecomposition( Response )
-%WAVELETDECOMPOSITION This function decomposes signals to wavelets
-%   Uses continuous wavelet decomposition to decompose neural response to
-%   wavelets that are further used for
+%Clean Environment
+close all;
+clear all;
 
+%Load Data
+load('../data/two_neuron/Data_2Ch_2012-07-18_15-48-18_[bih1_rec].mat');
 DC_Offset = 2.3;
-% Threshold = 0.3;
-NeuronData = Response - DC_Offset;
-
+Threshold = 0.3;
+Neuron1Data = vect{1} - DC_Offset;
+Neuron2Data = vect{2} - DC_Offset;
 
 
 % Invert
@@ -25,7 +26,7 @@ Scale = 1:32;
 WaveName = 'bior1.3';
 
 % Calculate wavelet coefficients
-Coefs = cwt(NeuronData, Scale, WaveName);
+Coefs = cwt(Neuron1Data, Scale, WaveName);
 
 % Calculate threshold. Using formula Threshold = sd*sqrt(2*log(N))
 % This is a primitive method. Need to focus on a better algorithm, that uses thesis testing.
@@ -34,7 +35,7 @@ Coefs = cwt(NeuronData, Scale, WaveName);
 % Calculate Sigma for each translated coefficient.
 
 SampleMeanCoeff = mean(Coefs,2)';
-SigmaCoeff = median((Coefs-SampleMeanCoeff), 2) ./ 0.6745;
+SigmaCoeff = median((coefs-SampleMeanCoeff), 2) ./ 0.6745;
 MuCoeff = mean(abs(coefs'))';
 Gamma = 0.5; %Dummy value. have to check literature for it! Gamma depends 
 % on acceptable false alarms and ommision. These are calculated using
@@ -50,7 +51,7 @@ SizeCoeffs = size(Coefs);
 N = SizeCoeffs(2);
 NumCoeffs = SizeCoeffs(1);
 
-sd = std(Coefs,0,2);
+sd = std(coefs,0,2);
 Threshold = sd.*sqrt(2*log(N));
 FilteredSampleMean = zeros(NumCoeffs);
 SizeOfFilterdSet = zeros(NumCoeffs);
@@ -81,16 +82,18 @@ RationProbabilityOfHypothesis = (N - SizeOfFilterdSet)./SizeOfFilterdSet;
 LogGamma = L*LM + log(RationProbabilityOfHypothesis);
 Theta = FilteredSampleMean./2 + ((SigmaCoeff.^2)./FilteredSampleMean).*LogGamma;
 
-BinaryCoeffs = zeros(SizeCoeffs);
-for i = 1:NumCoeffs
-   BinaryCoeffs(i, :) =  Coefs(Coefs(i,:) < Theta(i));
-end
-
-
 % Here implement a way to select whether H0/H1 is true. For this purpose
 % just use a conditional test or z test. But before applying that one must
 % know whether the data fits normal distribution or not. Will have to
 % revisit this section once again.
 
-end
+
+
+
+
+
+
+		 
+
+
 
