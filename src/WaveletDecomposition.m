@@ -1,4 +1,4 @@
-function [ BinaryCoeffs ] = waveletDecomposition( Response )
+function [ BinaryCoeffs, Coefs ] = waveletDecomposition( Response )
 %WAVELETDECOMPOSITION This function decomposes signals to wavelets
 %   Uses continuous wavelet decomposition to decompose neural response to
 %   wavelets that are further used for
