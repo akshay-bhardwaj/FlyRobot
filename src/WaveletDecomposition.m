@@ -21,21 +21,31 @@ NeuronData = Response - DC_Offset;
 % plot(wpt);
 
 % Continuous wavelet decomposition properties
-Scale = 1:32;
+Scale = 1:8;
 WaveName = 'bior1.3';
 
 % Calculate wavelet coefficients
 Coefs = cwt(NeuronData, Scale, WaveName);
+SizeCoeffs = size(Coefs);
+N = SizeCoeffs(2);
+NumCoeffs = SizeCoeffs(1);
+
 
 % Calculate threshold. Using formula Threshold = sd*sqrt(2*log(N))
 % This is a primitive method. Need to focus on a better algorithm, that uses thesis testing.
 
 % For main method:
 % Calculate Sigma for each translated coefficient.
-
+disp(size(Coefs));
 SampleMeanCoeff = mean(Coefs,2)';
-SigmaCoeff = median((Coefs-SampleMeanCoeff), 2) ./ 0.6745;
-MuCoeff = mean(abs(coefs'))';
+DiffCoeff = zeros(SizeCoeffs);
+for i = 1:NumCoeffs
+    DiffCoeff(:,i) = abs(Coefs(:,i) - SampleMeanCoeff(i));
+end
+%SigmaCoeff = median((Coefs-SampleMeanCoeff), 2) ./ 0.6745;
+SigmaCoeff = median(DiffCoeff, 2) ./ 0.6745;
+disp(size(SigmaCoeff));
+MuCoeff = mean(abs(Coefs'))';
 Gamma = 0.5; %Dummy value. have to check literature for it! Gamma depends 
 % on acceptable false alarms and ommision. These are calculated using
 % LambdaFA and LambdaOM. and the prior probabilites of the two hypothesis,
@@ -46,20 +56,18 @@ Theta = 0.2; % Dummy Value. This variable decides the threshold for
 % To determine Sample Mean independent of noise we use the threshold
 % defined as Threshold = sd*sqrt(2*log(N)) and then calculate set of
 % elements which lie below the threshold.
-SizeCoeffs = size(Coefs);
-N = SizeCoeffs(2);
-NumCoeffs = SizeCoeffs(1);
 
 sd = std(Coefs,0,2);
+disp(size(sd));
 Threshold = sd.*sqrt(2*log(N));
-FilteredSampleMean = zeros(NumCoeffs);
-SizeOfFilterdSet = zeros(NumCoeffs);
+FilteredSampleMean = zeros(NumCoeffs,1);
+SizeOfFilterdSet = zeros(NumCoeffs,1);
 % Calculating sample mean of the data filtered out using simple
 % thresholding operation. Threshold calculated using formula:
 % Threshold = sd.*sqrt(2*log(N)) 
 
 for i = 1:NumCoeffs;    
-    CoeffFiltered = Coefs(Coefs >= Threshold);
+    CoeffFiltered = Coefs(Coefs(i,:) >= Threshold(i));
     FilteredSampleMean(i) = mean(CoeffFiltered);
     SizeOfFilterdSet = size(CoeffFiltered,2); %Check for dimension
 end;
@@ -79,11 +87,16 @@ L = 0.1; % Currently just selected a dummy value.
 RationProbabilityOfHypothesis = (N - SizeOfFilterdSet)./SizeOfFilterdSet;
 
 LogGamma = L*LM + log(RationProbabilityOfHypothesis);
+disp('Next part');
+disp(size(FilteredSampleMean));
+disp(size(SigmaCoeff));
+disp(size(LogGamma));
 Theta = FilteredSampleMean./2 + ((SigmaCoeff.^2)./FilteredSampleMean).*LogGamma;
-
+disp(size(Theta));
 BinaryCoeffs = zeros(SizeCoeffs);
+Theta
 for i = 1:NumCoeffs
-   BinaryCoeffs(i, :) =  Coefs(Coefs(i,:) < Theta(i));
+   BinaryCoeffs(i, :) =  (Coefs(i,:) < Theta(i));
 end
 
 
