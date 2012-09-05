@@ -96,7 +96,7 @@ disp(size(Theta));
 BinaryCoeffs = zeros(SizeCoeffs);
 Theta
 for i = 1:NumCoeffs
-   BinaryCoeffs(i, :) =  (Coefs(i,:) < Theta(i));
+   BinaryCoeffs(i, :) =  (Coefs(i,:) > Theta(i)); % There is mistake in research paper regarding it!
 end
 
 

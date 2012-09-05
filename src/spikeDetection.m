@@ -3,7 +3,7 @@ function [ Spikes ] = spikeDetection( BinaryWavelets, WaveletCoeffs )
 %   Detailed explanation goes here
 %    WaveletLocation = getLocation(BinaryWavelets);
     NoOfWavelets = size(BinaryWavelets, 1);
-    ElePerWavelets = size(BinaryWavelets, 2);
+    %ElePerWavelets = size(BinaryWavelets, 2);
     USpikeWavelet = [];
     WaveData = struct('Locations', [], 'BinaryWavelets', [], WaveletCoeffs, []);
     for i = 1:NoOfWavelets
@@ -15,16 +15,29 @@ function [ Spikes ] = spikeDetection( BinaryWavelets, WaveletCoeffs )
     end
        clear BinaryWavelets WaveletCoeffs;
        Spikes = USpikeWavelet;
+       % Working fine till here
        [CRegionList, Regions] = getContiguouRegion(USpikeWavelet);
-       AverageTime = zeros(ElePerWavelets, 1);
+       AverageTime = zeros(Regions, 1);
+       T = zeros(NoOfWavelets, Regions);
        for i = 1:Regions
-           BinaryCoeffsIndex = USpikeWavelet(:,find(CRegionList == i));
-           for j = 1:length(BinaryCoeffsIndex)
-              OneIndex = find(BinaryWavelets(:,j) == 1);
-              [MaxValues, MaxIndex] = max(WaveletCoeffs(OneIndex,BinaryCoeffsIndex));
-              
-           end
+           BinaryCoeffsIndex = USpikeWavelet(CRegionList == i);
+           Tsum = 0;
+           count = 0;
+           for k = 1:NoOfWavelets
+               [MaxValue, MaxIndex] = max(WaveletCoeffs(BinaryCoeffsIndex(k,:)));
+               if (BinaryWavelets(k,BinaryCoeffsIndex(MaxIndex)) == 1)
+                     T(k,i) = BinaryCoeffsIndex(MaxIndex);
+                     Tsum = Tsum+BinaryCoeffsIndex(MaxIndex);
+                     count= count+1;
+               else
+                     T(k,i) = 0;
+               end
+               AverageTime(i) = Tsum/count;
+           end           
        end
+       
+       
+       % Calculate the Index;
        
 end
 
