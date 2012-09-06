@@ -1,4 +1,4 @@
-function [ SpikeTrain ] = spikeRate( SpikeTime, TotalTime )
+function [ SpikeRate, SpikeTime ] = spikeRate( SpikeTime, TotalTime )
 %SPIKERATE Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -9,15 +9,10 @@ for i = 1:length(SpikeTime)
     SpikeTrain(SpikeTime(i)) = 1;
 end
 
-% %SpikeTrainSize = size(SpikeTrain);
-% Xvec = 1:TotalTime;
-% Sigma =10;
-% %Sigma = 25;
-% %FiringRate = zeros(SpikeTrainSize);
-%         
-%     for i = 1:TotalTime
-%        GussianData = normpdf(Xvec, i, Sigma);
-%        SpikeRate(i) = sum(SpikeTrain.*GussianData');
-%        
-%     end
+N = 1000; %number of elements  in gussian windows
+GWin = gausswin(N);
+for j = 1+N:(length(SpikeTrain)-N)
+    SpikeRate(j) = GWin'*SpikeTrain((j+1-N/2):(j+N/2));
+end
+
 end

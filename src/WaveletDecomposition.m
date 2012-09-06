@@ -94,7 +94,7 @@ disp(size(LogGamma));
 Theta = FilteredSampleMean./2 + ((SigmaCoeff.^2)./FilteredSampleMean).*LogGamma;
 disp(size(Theta));
 BinaryCoeffs = zeros(SizeCoeffs);
-Theta
+%Theta
 for i = 1:NumCoeffs
    BinaryCoeffs(i, :) =  (Coefs(i,:) > Theta(i)); % There is mistake in research paper regarding it!
 end
