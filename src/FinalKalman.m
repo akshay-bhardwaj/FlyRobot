@@ -51,6 +51,7 @@ Pk1gk1 = Pk1gk - Wk1*Sk1*Wk1';
 %%%Cov
 
 Xk1gk1 = Xk1gk + Wk1*Vk1;
+TempDiff = (Wk1*Vk1);
 
 predict_input(:,t) = Xk1gk1;
 Xkgk = Xk1gk1;
