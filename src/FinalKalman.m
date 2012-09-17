@@ -8,14 +8,14 @@ H = [1 1 1];
 %Uk = 1;
 % Xkgk = [3.9039;0.171;-3.9039*(pi*0.6)^2];
 
-Xkgk = [3.9039;-0.171/SampleRate;0.3/(SampleRate^2)];
+Xkgk = [3.7812;-0.171/SampleRate;0.3/(SampleRate^2)];
 Qk = 0;
 Pkgk = [1 1 1;1 1 1;1 1 1];
 t = [1 2 1; 2 3 2; 1 2 1];
 %Z = [100 99.5 98.0 95.5 92.0 88.5];
 %Z = sr; %spike rate
-temp_input = inp(110265: 120000);
-temp_fire = sr(110265:120000);
+%temp_input = inp(110265: 120000);
+temp_fire = x2(24500:55000);
 Z = temp_fire;
 Rk1 = 1;
 predict_input = zeros(3, length(Z));
